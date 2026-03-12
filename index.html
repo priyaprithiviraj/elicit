@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elicit – Narrative Elicitation Interface</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --green-dark:#059669;
+  --red-dark:#dc2626;
+  --bg:#eef2f7;
+  --surface:#ffffff;
+  --border:#dde3ec;
+  --text:#1e293b;
+  --muted:#64748b;
+  --light:#f8fafc;
+  --step1:#6ee7b7;
+  --step2:#93c5fd;
+  --step3:#c4b5fd;
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  height:100vh;
+  display:flex;flex-direction:column;
+  overflow:hidden;color:var(--text);
+}
+
+.elicit-header{text-align:center;padding:7px 0 3px;flex-shrink:0;}
+.elicit-header h1{font-family:"Patrick Hand",cursive;font-size:28px;color:#1e293b;letter-spacing:.5px;}
+.wave-line{
+  height:5px;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent, transparent 5px,
+    rgba(22,163,74,.3) 5px, rgba(22,163,74,.3) 7px,
+    transparent 7px, transparent 12px,
+    rgba(234,88,12,.3) 12px, rgba(234,88,12,.3) 14px,
+    transparent 14px, transparent 19px,
+    rgba(2,132,199,.3) 19px, rgba(2,132,199,.3) 21px,
+    transparent 21px, transparent 26px
+  );
+}
+
+/* LAYOUT */
+.body-row{flex:1;display:flex;overflow:hidden;position:relative;}
+
+/* STEP RAIL */
+.step-rail{
+  display:flex;flex-direction:column;justify-content:center;
+  gap:10px;padding:8px 0 8px 6px;
+  flex-shrink:0;z-index:10;position:relative;
+  background:none;
+}
+.step-btn{
+  width:38px;height:38px;border-radius:50%;border:2px solid #1e293b;
+  background:#1e293b;color:white;
+  font-family:'Patrick Hand',cursive;font-weight:800;font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .18s,opacity .18s;position:relative;
+  flex-shrink:0;
+}
+.step-btn:hover{transform:scale(1.10);}
+.step-btn.active{outline:3px solid #1e293b;outline-offset:3px;}
+.step-btn-outline{
+  width:auto;padding:0 12px;border-radius:20px;font-size:13px;
+  font-family:'Patrick Hand',cursive;font-weight:700;
+  background:white;color:#1e293b;
+}
+.step-btn .dot{
+  position:absolute;top:1px;right:1px;
+  width:9px;height:9px;border-radius:50%;
+  background:#10b981;border:1.5px solid white;display:none;
+}
+.step-btn.has-data .dot{display:block;}
+
+/* SLIDE PANELS */
+.slide-panel{
+  position:fixed;
+  top:0;
+  width:240px;
+  background:white;
+  border-radius:10px;
+  border:2px solid #1e293b;
+  padding:16px;
+  z-index:100;
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-6px);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.slide-panel.open{
+  opacity:1;
+  pointer-events:all;
+  transform:translateX(0);
+}
+
+.panel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;color:#1e293b;}
+.p1 .panel-label{}.p2 .panel-label{}.p3 .panel-label{}
+
+.name-input{
+  width:100%;padding:8px 10px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:14px;font-family:'Nunito',sans-serif;
+  outline:none;transition:border-color .2s;
+}
+.name-input:focus{border-color:#93c5fd;}
+
+.upload-zone{
+  border:2px dashed #bfdbfe;border-radius:10px;
+  padding:14px 10px;text-align:center;background:#f0f9ff;
+  cursor:pointer;transition:background .2s,border-color .2s;display:block;
+}
+.upload-zone:hover{background:#dbeafe;border-color:#60a5fa;}
+.upload-zone .up-icon{font-size:26px;margin-bottom:4px;}
+.upload-zone p{font-size:12px;color:#1d4ed8;font-weight:600;}
+.upload-zone small{font-size:10px;color:#64748b;}
+.upload-zone input{display:none;}
+.file-count{margin-top:8px;font-size:12px;color:var(--muted);text-align:center;min-height:16px;}
+
+.instr-body{font-size:12px;color:#374151;line-height:1.7;}
+.instr-body .step-row{display:flex;gap:8px;margin-bottom:9px;align-items:flex-start;}
+.instr-body .num{
+  width:8px;height:8px;border-radius:50%;
+  background:#1e293b;flex-shrink:0;margin-top:6px;
+  font-size:0;
+}
+.instr-body em{font-style:italic;color:#1e293b;}
+.instr-tip{
+  margin-top:10px;padding:8px;background:#f1f5f9;
+  border-radius:8px;font-size:11px;color:#475569;
+}
+
+/* MAIN CONTENT */
+.main-content{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:6px 12px 8px 6px;overflow:hidden;
+}
+.viewer{
+  width:100%;max-width:820px;height:100%;
+  background:white;border-radius:18px;
+  box-shadow:0 6px 28px rgba(0,0,0,.09);
+  border:2px solid #1e293b;
+  padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden;
+}
+
+.session-bar{display:flex;align-items:center;gap:10px;min-height:28px;}
+.session-name{font-size:13px;font-weight:700;color:var(--muted);}
+.session-name span{color:var(--text);}
+.progress-badge{
+  margin-left:auto;background:var(--light);border:1px solid var(--border);
+  padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;color:var(--muted);
+}
+
+.strip-wrap{
+  border:1.5px solid var(--border);border-radius:10px;
+  background:var(--light);padding:5px 6px;min-height:70px;
+  display:flex;align-items:center;
+}
+.story-strip{display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;}
+.story-strip::-webkit-scrollbar{display:none;}
+
+.story-thumb{
+  width:58px;height:58px;border-radius:7px;border:2px solid var(--border);
+  overflow:hidden;background:white;flex-shrink:0;cursor:pointer;
+  transition:border-color .15s,transform .15s;position:relative;
+}
+.story-thumb:hover{transform:scale(1.07);}
+.story-thumb.active{border-color:#6366f1;}
+.story-thumb.recorded{border-color:#0284c7;border-width:2.5px;}
+.story-thumb.recorded::after{
+  content:'✓';position:absolute;bottom:1px;right:2px;
+  font-size:10px;font-weight:900;color:#0284c7;
+  background:rgba(255,255,255,.9);border-radius:3px;padding:0 1px;
+  line-height:1.2;
+}
+.story-thumb img{width:100%;height:100%;object-fit:contain;}
+
+.main-image-stage{
+  flex:1;min-height:0;position:relative;
+  border:1.5px solid var(--border);border-radius:14px;
+  background:var(--light);display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.empty-stage{display:flex;flex-direction:column;align-items:center;gap:8px;color:#94a3b8;font-size:13px;}
+.empty-stage .big-icon{font-size:38px;opacity:.45;}
+.image-box{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.image-box img{max-width:100%;max-height:100%;object-fit:contain;}
+
+.carousel-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;border:none;
+  font-size:20px;background:rgba(0,0,0,.35);color:white;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;z-index:2;
+}
+.carousel-arrow:hover{background:rgba(0,0,0,.6);}
+.carousel-arrow.left{left:10px;}
+.carousel-arrow.right{right:10px;}
+
+.record-bar{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.record-row{display:flex;align-items:center;gap:10px;}
+
+.recordBtn{
+  background:#16a34a;color:#000000;border:2.5px solid #000000;
+  border-radius:20px;padding:0 20px;height:38px;font-weight:700;
+  cursor:pointer;font-size:16px;font-family:'Patrick Hand',cursive;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .15s,opacity .15s;
+}
+.recordBtn:disabled{opacity:.35;cursor:default;}
+.recordBtn:not(:disabled):hover{background:#15803d;}
+
+.stopBtn{
+  background:#ea580c;color:#000000;border:2.5px solid #000000;
+  border-radius:20px;padding:0 20px;height:38px;font-weight:700;
+  cursor:pointer;font-size:16px;font-family:'Patrick Hand',cursive;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .15s,opacity .15s;
+}
+.stopBtn:disabled{opacity:.35;cursor:default;}
+.stopBtn:not(:disabled):hover{background:#c2410c;}
+
+.downloadBtn{
+  background:#0284c7;color:#000000;border:2.5px solid #000000;
+  border-radius:20px;padding:0 20px;height:38px;font-weight:700;
+  cursor:pointer;font-size:16px;font-family:'Patrick Hand',cursive;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:background .15s,opacity .15s;
+}
+.downloadBtn:disabled{opacity:.35;cursor:default;}
+.downloadBtn:not(:disabled):hover{background:#0369a1;}
+
+@keyframes pulse-red{0%,100%{opacity:1;}50%{opacity:.25;}}
+.rec-dot{width:9px;height:9px;border-radius:50%;background:#fca5a5;animation:pulse-red 1s infinite;display:inline-block;}
+
+.status{font-size:12px;color:var(--muted);min-height:15px;}
+.status.recording{color:#dc2626;font-weight:700;}
+.status.saved{color:#059669;font-weight:700;}
+
+.playback-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);min-height:20px;}
+.playback-row audio{height:26px;flex:1;max-width:320px;}
+
+.overlay{display:none;position:fixed;inset:0;z-index:8;}
+.overlay.active{display:block;}
+
+.footer{text-align:center;font-size:10px;color:#9ca3af;padding:3px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="elicit-header">
+  <div class="wave-line"></div>
+  <h1>Elicit</h1>
+  <div class="wave-line"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+<div class="body-row">
+
+  <div class="step-rail">
+    <button class="step-btn s1" id="btn1" onclick="togglePanel(1)" title="Step 1 – Enter Name">1<span class="dot"></span></button>
+    <button class="step-btn s2" id="btn2" onclick="togglePanel(2)" title="Step 2 – Upload Images">2<span class="dot"></span></button>
+    <button class="step-btn s3" id="btn3" onclick="togglePanel(3)" title="Step 3 – How to use">3</button>
+    <div style="width:38px;height:1px;background:#cbd5e1;margin:2px 0;"></div>
+    <button class="step-btn step-btn-outline" id="btnA" onclick="togglePanel('A')" title="About">About</button>
+    <button class="step-btn step-btn-outline" id="btnC" onclick="togglePanel('C')" title="Cite">Cite</button>
+  </div>
+
+  <div class="main-content">
+    <div class="viewer">
+
+      <div class="session-bar">
+        <div class="session-name" id="sessionNameDisplay"></div>
+      </div>
+
+      <div class="strip-wrap">
+        <div id="storyStrip" class="story-strip">
+        </div>
+      </div>
+
+      <div class="main-image-stage">
+        <div class="empty-stage" id="emptyStage"></div>
+        <div class="image-box" id="imageBox" style="display:none">
+          <img id="slide" alt="Story image">
+        </div>
+        <button class="carousel-arrow right" id="arrowRight" style="display:none" onclick="nextImage()">›</button>
+      </div>
+
+      <div class="record-bar">
+        <div class="record-row">
+          <button class="recordBtn" id="recordBtn" disabled onclick="startRecording()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6"/></svg> Record
+          </button>
+          <button class="stopBtn" id="stopBtn" disabled onclick="stopRecording()">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect width="11" height="11" rx="2"/></svg> Stop
+          </button>
+          <button class="downloadBtn" id="downloadBtn" disabled onclick="downloadAll()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 1v8M3 6.5l3.5 3.5 3.5-3.5"/><path d="M1 11h11"/></svg> Download
+          </button>
+        </div>
+        <div id="status" class="status"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  MIT License © 2026 Priya Prithiviraj &nbsp;|&nbsp; <a href="https://github.com/priyaprithiviraj" target="_blank" style="color:#9ca3af;">github.com/priyaprithiviraj</a>
+</div>
+
+<script>
+/* ── PANELS ── */
+let openPanel = null;
+const allPanels = ['A','C',1,2,3];
+
+function togglePanel(n) {
+  if (openPanel === n) { closeAllPanels(); return; }
+  closeAllPanels(false);
+  openPanel = n;
+
+  const btn = document.getElementById('btn'+n);
+  const panel = document.getElementById('panel'+n);
+  const rail = document.querySelector('.step-rail');
+  const railRect = rail.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+
+  // Always position panel to the right of the rail with a clear 14px gap
+  panel.style.left = (railRect.right + 14) + 'px';
+
+  // Align panel top to button top, clamped to screen
+  const panelH = panel.offsetHeight || 200;
+  const viewH = window.innerHeight;
+  let top = btnRect.top;
+  if (top + panelH > viewH - 10) top = viewH - panelH - 10;
+  if (top < 10) top = 10;
+  panel.style.top = top + 'px';
+
+  panel.classList.add('open');
+  btn.classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+}
+
+function closeAllPanels(clearOverlay=true) {
+  allPanels.forEach(n=>{
+    document.getElementById('panel'+n).classList.remove('open');
+    document.getElementById('btn'+n).classList.remove('active');
+  });
+  if (clearOverlay) document.getElementById('overlay').classList.remove('active');
+  openPanel = null;
+}
+
+function copyCitation() {
+  const text = "Prithiviraj, P. (2026). Elicit: A narrative elicitation tool [Computer software]. https://priyaprithiviraj.github.io/elicit";
+  navigator.clipboard.writeText(text).then(()=>{
+    const el = document.getElementById('copyConfirm');
+    el.textContent = 'Copied!';
+    setTimeout(()=>el.textContent='', 2000);
+  });
+}
+
+/* ── NAME ── */
+function onNameChange() {
+  const val = document.getElementById('childName').value.trim();
+  const disp = document.getElementById('sessionNameDisplay');
+  disp.dataset.name = val;
+  disp.innerHTML = val ? `<span>${val}</span>` : '';
+  document.getElementById('btn1').classList.toggle('has-data', val.length > 0);
+}
+
+/* ── IMAGES ── */
+let images=[], index=0, recordings={};
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('imageLoader').addEventListener('change', function(e){
+    const files = Array.from(e.target.files).slice(0, 10);
+    if (!files.length) return;
+    files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+
+    // Use FileReader to get data URLs (work in sandboxed iframes unlike blob URLs)
+    let loaded = 0;
+    const result = new Array(files.length);
+    files.forEach((f, i) => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        result[i] = { src: ev.target.result, name: f.name };
+        loaded++;
+        if (loaded === files.length) {
+          images = result;
+          recordings = {}; index = 0;
+          document.getElementById('fileCount').textContent = images.length+' image'+(images.length!==1?'s':'')+' loaded';
+          document.getElementById('btn2').classList.add('has-data');
+          showImage(); updateUI();
+        }
+      };
+      reader.readAsDataURL(f);
+    });
+  });
+});
+
+function showImage(){
+  if (!images.length) return;
+  document.getElementById('emptyStage').style.display='none';
+  document.getElementById('imageBox').style.display='flex';
+  document.getElementById('arrowRight').style.display='flex';
+  document.getElementById('slide').src=images[index].src;
+  buildStrip(); updatePlayback();
+}
+
+function buildStrip(){
+  const strip=document.getElementById('storyStrip');
+  strip.innerHTML='';
+  images.forEach((img,i)=>{
+    const t=document.createElement('div');
+    t.className='story-thumb'+(i===index?' active':'')+(recordings[i]?' recorded':'');
+    t.title=img.name; t.onclick=()=>{index=i;showImage();};
+    const im=document.createElement('img'); im.src=img.src;
+    t.appendChild(im); strip.appendChild(t);
+  });
+  const a=strip.children[index];
+  if(a) a.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+
+  // Session complete check
+  const allDone = images.length > 0 && Object.keys(recordings).length === images.length;
+  const bar = document.getElementById('sessionNameDisplay');
+  if(allDone){
+    bar.innerHTML = (bar.dataset.name ? `<span>${bar.dataset.name}</span> &nbsp;` : '') +
+      '<span style="color:#059669;font-weight:700;font-size:13px;">✓ Session complete</span>';
+  }
+}
+
+function nextImage(){ if(!images.length)return; index=(index+1)%images.length; showImage(); }
+function previousImage(){ if(!images.length)return; index=(index-1+images.length)%images.length; showImage(); }
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowRight') nextImage();
+  if(e.key==='Escape') closeAllPanels();
+});
+
+/* ── UI STATE ── */
+function updateUI(){
+  const hasImages=images.length>0;
+  const isRec=mediaRecorder&&mediaRecorder.state==='recording';
+  document.getElementById('recordBtn').disabled=!hasImages||isRec;
+  document.getElementById('stopBtn').disabled=!isRec;
+  document.getElementById('downloadBtn').disabled=Object.keys(recordings).length===0;
+  if(!hasImages) setStatus('','');
+  else if(isRec) setStatus('Recording…','recording');
+  else setStatus('','');
+}
+function setStatus(msg,cls){
+  const el=document.getElementById('status');
+  el.textContent=msg; el.className='status'+(cls?' '+cls:'');
+}
+function updatePlayback(){
+  updateUI();
+}
+
+/* ── RECORDING → WAV ── */
+let mediaRecorder=null, audioCtx=null, recordingStream=null, pcmBuffers=[], sampleRate=44100;
+
+async function startRecording(){
+  try{
+    recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
+    sampleRate=audioCtx.sampleRate;
+    const source=audioCtx.createMediaStreamSource(recordingStream);
+    const processor=audioCtx.createScriptProcessor(4096,1,1);
+    pcmBuffers=[];
+    processor.onaudioprocess=e=>{
+      pcmBuffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+    };
+    source.connect(processor); processor.connect(audioCtx.destination);
+    mediaRecorder={state:'recording',stop:()=>finishRecording(processor,source)};
+    updateUI();
+    document.getElementById('recordBtn').innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="#fca5a5"><circle cx="5" cy="5" r="5" class="rec-dot-svg"/></svg> Recording';
+    // pulse the dot
+    const dot = document.getElementById('recordBtn').querySelector('circle');
+    if(dot) dot.style.animation='pulse-red 1s infinite';
+  } catch(err){
+    setStatus('Microphone access denied. Check browser permissions.','');
+    console.error(err);
+  }
+}
+
+function stopRecording(){
+  if(mediaRecorder&&mediaRecorder.state==='recording'){
+    mediaRecorder.stop();
+    document.getElementById('recordBtn').innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6"/></svg> Record';
+  }
+}
+
+function finishRecording(processor,source){
+  processor.disconnect(); source.disconnect();
+  if(recordingStream) recordingStream.getTracks().forEach(t=>t.stop());
+  audioCtx.close();
+  const totalLen=pcmBuffers.reduce((s,b)=>s+b.length,0);
+  const merged=new Float32Array(totalLen);
+  let off=0; for(const b of pcmBuffers){merged.set(b,off);off+=b.length;}
+  const wavBlob=encodeWAV(merged,sampleRate);
+  const url=URL.createObjectURL(wavBlob);
+  recordings[index]={blob:wavBlob,url};
+  mediaRecorder=null;
+  updatePlayback(); buildStrip();
+}
+
+function encodeWAV(samples,rate){
+  const nc=1,bps=16,dataSize=samples.length*2;
+  const buf=new ArrayBuffer(44+dataSize);
+  const v=new DataView(buf);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  ws(0,'RIFF'); v.setUint32(4,36+dataSize,true);
+  ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true);
+  v.setUint16(22,nc,true); v.setUint32(24,rate,true);
+  v.setUint32(28,rate*nc*bps/8,true); v.setUint16(32,nc*bps/8,true);
+  v.setUint16(34,bps,true); ws(36,'data'); v.setUint32(40,dataSize,true);
+  let ptr=44;
+  for(let i=0;i<samples.length;i++){
+    const s=Math.max(-1,Math.min(1,samples[i]));
+    v.setInt16(ptr,s<0?s*0x8000:s*0x7FFF,true); ptr+=2;
+  }
+  return new Blob([buf],{type:'audio/wav'});
+}
+
+/* ── DOWNLOAD ── */
+function downloadAll(){
+  const keys=Object.keys(recordings); if(!keys.length) return;
+  const name=document.getElementById('childName').value.trim()||'session';
+  const safe=name.replace(/[^a-z0-9_\-]/gi,'_');
+  keys.forEach(i=>{
+    const a=document.createElement('a');
+    a.href=recordings[i].url;
+    a.download=`${safe}_image_${String(Number(i)+1).padStart(2,'0')}.wav`;
+    a.click();
+  });
+}
+</script>
+<!-- PANELS — direct children of body so overflow:hidden on body-row never clips them -->
+<div class="slide-panel" id="panelA">
+  <div class="panel-label">About</div>
+  <div style="font-size:12px;color:#374151;line-height:1.7;">
+    <p style="margin-bottom:8px;"><strong>Elicit</strong> is a browser-based tool for collecting spoken narratives from participants using picture stimuli.</p>
+    <p style="margin-bottom:8px;">Upload images, record responses, and download the audio as <em>.wav</em> files for analysis.</p>
+    <p>Built by <strong>Priya Prithiviraj</strong>, 2026.<br>
+    <a href="https://github.com/priyaprithiviraj" target="_blank" style="color:#1e293b;">github.com/priyaprithiviraj</a></p>
+  </div>
+</div>
+
+<div class="slide-panel" id="panelC">
+  <div class="panel-label">Cite</div>
+  <div style="font-size:12px;color:#374151;line-height:1.7;">
+    <p style="margin-bottom:10px;">If you use Elicit in your research or adapt it, please cite:</p>
+    <div style="background:#f1f5f9;border-left:3px solid #1e293b;padding:10px 12px;border-radius:0 8px 8px 0;font-size:11.5px;color:#1e293b;line-height:1.8;">
+      Prithiviraj, P. (2026). <em>Elicit: A narrative elicitation tool</em> [Computer software]. https://priyaprithiviraj.github.io/elicit
+    </div>
+    <button onclick="copyCitation()" style="margin-top:10px;width:100%;padding:7px;background:#1e293b;color:white;border:none;border-radius:7px;font-size:12px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;">Copy citation</button>
+    <div id="copyConfirm" style="text-align:center;font-size:11px;color:#059669;margin-top:5px;min-height:14px;"></div>
+  </div>
+</div>
+
+<div class="slide-panel" id="panel1">
+  <div class="panel-label">① Name</div>
+  <input class="name-input" type="text" id="childName" placeholder="Enter name…" oninput="onNameChange()" autocomplete="off">
+</div>
+
+<div class="slide-panel" id="panel2">
+  <div class="panel-label">② Upload Images</div>
+  <label class="upload-zone">
+    <div class="up-icon">🖼️</div>
+    <p>Choose image files</p>
+    <small>JPG, PNG, GIF — up to 10 images</small>
+    <input type="file" id="imageLoader" multiple accept="image/*">
+  </label>
+  <div class="file-count" id="fileCount"></div>
+</div>
+
+<div class="slide-panel" id="panel3">
+  <div class="panel-label">③ How to use</div>
+  <div class="instr-body">
+    <div class="step-row"><div class="num">1</div><div>Navigate images with the <strong>→</strong> arrow.</div></div>
+    <div class="step-row"><div class="num">2</div><div>Press <strong>Record</strong> to begin. Press <strong>Stop</strong> when done.</div></div>
+    <div class="step-row"><div class="num">3</div><div>A tick mark over the image confirms a saved recording.</div></div>
+    <div class="step-row"><div class="num">4</div><div>Press <strong>Download</strong> to save all recordings.</div></div>
+    <div class="instr-tip">The recording will continue across images unless manually stopped. Stop and re-record per image if you want to save as separate files.</div>
+  </div>
+</div>
+
+</body>
+</html>
