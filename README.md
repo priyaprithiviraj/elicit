@@ -4,15 +4,15 @@ Elicit is a browser-based tool for the elicitation and recording of spoken narra
 
 ## Screenshots
 
-**Step 1 — Enter the participant's name using button 1. The name appears immediately in the session bar.**
+**Step 1: Enter the participant's name using button 1. The name appears immediately in the session bar.**
 
 ![Step 1](screenshot_1.png)
 
-**Step 2 — Upload story images using button 2. Thumbnails appear in the strip and the first image is displayed automatically.**
+**Step 2: Upload story images using button 2. Thumbnails appear in the strip and the first image is displayed automatically.**
 
 ![Step 2](screenshot_2.png)
 
-**Step 3 — Navigate images using the arrow or keyboard. A tick on the first thumbnail confirms a completed recording. Press Record on the current image to continue. Once all recordings are saved, the Download button becomes active.**
+**Step 3: Navigate images using the arrow or keyboard. A tick on the first thumbnail confirms a completed recording. Press Record on the current image to continue. Once all recordings are saved, the Download button becomes active.**
 
 ![Step 3](screenshot_3.png)
 
