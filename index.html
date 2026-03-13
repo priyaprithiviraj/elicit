@@ -82,11 +82,11 @@ body{
 .slide-panel{
   position:fixed;
   top:0;
-  width:240px;
+  width:280px;
   background:white;
   border-radius:10px;
   border:2px solid #1e293b;
-  padding:16px;
+  padding:14px;
   z-index:100;
   opacity:0;
   pointer-events:none;
@@ -108,6 +108,27 @@ body{
   outline:none;transition:border-color .2s;
 }
 .name-input:focus{border-color:#93c5fd;}
+
+.meta-field{margin-bottom:7px;}
+.meta-label{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:#64748b;margin-bottom:2px;display:block;}
+.meta-input{
+  width:100%;padding:5px 9px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:12px;font-family:'Nunito',sans-serif;
+  outline:none;transition:border-color .2s;color:var(--text);background:white;
+}
+.meta-input:focus{border-color:#93c5fd;}
+.meta-input::placeholder{color:#b0bec5;}
+.meta-select{
+  width:100%;padding:5px 9px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:12px;font-family:'Nunito',sans-serif;
+  outline:none;transition:border-color .2s;color:var(--text);background:white;
+  cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;
+}
+.meta-select:focus{border-color:#93c5fd;}
+.meta-select.unset{color:#b0bec5;}
 
 .upload-zone{
   border:2px dashed #bfdbfe;border-radius:10px;
@@ -139,13 +160,127 @@ body{
   flex:1;display:flex;align-items:center;justify-content:center;
   padding:6px 12px 8px 6px;overflow:hidden;
 }
+
+/* Notes panel sits to the right of the viewer inside main-content */
+.content-row{
+  display:flex;gap:10px;width:100%;max-width:1060px;height:100%;
+  align-items:center;
+}
 .viewer{
-  width:100%;max-width:820px;height:100%;
+  flex:1;min-width:0;height:100%;
   background:white;border-radius:18px;
   box-shadow:0 6px 28px rgba(0,0,0,.09);
   border:2px solid #1e293b;
   padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;overflow:hidden;
 }
+
+/* Notes side panel */
+.notes-panel{
+  width:200px;flex-shrink:0;height:100%;
+  background:white;border-radius:18px;
+  box-shadow:0 6px 28px rgba(0,0,0,.09);
+  border:2px solid #1e293b;
+  padding:12px;display:none;flex-direction:column;gap:8px;overflow:hidden;
+}
+.notes-panel.visible{display:flex;}
+.notes-panel-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#1e293b;flex-shrink:0;
+}
+.notes-image-label{
+  font-size:10px;font-weight:600;color:var(--muted);
+  flex-shrink:0;min-height:14px;
+}
+.notes-textarea{
+  flex:1;width:100%;border:1.5px solid var(--border);
+  border-radius:10px;padding:8px 10px;
+  font-size:12px;font-family:'Nunito',sans-serif;
+  color:var(--text);resize:none;outline:none;
+  transition:border-color .2s;line-height:1.6;
+  background:var(--light);
+}
+.notes-textarea:focus{border-color:#93c5fd;background:white;}
+.notes-textarea::placeholder{color:#b0bec5;}
+.notes-saved{
+  font-size:10px;color:#059669;text-align:right;
+  min-height:13px;flex-shrink:0;
+}
+
+/* Per-image label in notes panel */
+.notes-img-label{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;
+}
+
+/* Playback row in notes panel */
+.playback-row{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.playBtn{
+  background:#7c3aed;color:#000000;border:2.5px solid #000000;
+  border-radius:20px;padding:0 20px;height:38px;font-weight:700;
+  cursor:pointer;font-size:16px;font-family:'Patrick Hand',cursive;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .15s,opacity .15s;flex-shrink:0;
+}
+.playBtn:disabled{opacity:.35;cursor:default;}
+.playBtn:not(:disabled):hover{background:#6d28d9;}
+.playback-time{font-size:11px;color:var(--muted);font-family:'Nunito',sans-serif;}
+
+/* Warmup checkbox row */
+.warmup-row{display:flex;align-items:center;gap:7px;margin-bottom:6px;margin-top:2px;}
+.warmup-row input[type=checkbox]{
+  width:15px;height:15px;accent-color:#059669;cursor:pointer;flex-shrink:0;
+}
+.warmup-row label{font-size:12px;color:var(--text);cursor:pointer;user-select:none;}
+
+/* Scrollable panel content */
+.panel-scroll{overflow-y:auto;flex:1;padding-right:2px;}
+.panel-scroll::-webkit-scrollbar{width:4px;}
+.panel-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px;}
+
+/* Stimulus number overlay on image stage */
+.stim-badge{
+  position:absolute;bottom:8px;left:10px;
+  background:rgba(30,41,59,.72);color:white;
+  font-size:11px;font-weight:700;font-family:'Nunito',sans-serif;
+  padding:2px 9px;border-radius:20px;
+  pointer-events:none;display:none;z-index:3;letter-spacing:.03em;
+}
+
+/* Recording timer in status area */
+.rec-timer{
+  font-size:13px;font-weight:700;color:#dc2626;
+  font-family:'Nunito',sans-serif;letter-spacing:.04em;
+  min-height:18px;
+}
+
+/* Autosave toast */
+.autosave-toast{
+  position:fixed;bottom:28px;right:16px;
+  background:#1e293b;color:white;font-size:11px;font-weight:600;
+  padding:5px 14px;border-radius:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;z-index:200;
+}
+.autosave-toast.show{opacity:1;}
+
+/* Reset button */
+.reset-btn{
+  margin-left:auto;background:white;color:#dc2626;
+  border:1.5px solid #dc2626;border-radius:20px;
+  padding:2px 12px;font-size:11px;font-weight:700;
+  font-family:'Nunito',sans-serif;cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.reset-btn:hover{background:#dc2626;color:white;}
+
+/* Session-ID input — editable but pre-filled */
+.meta-input-ro{
+  width:100%;padding:5px 9px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:11px;font-family:'Nunito',sans-serif;
+  color:var(--muted);background:white;
+  outline:none;transition:border-color .2s;cursor:text;
+}
+.meta-input-ro:focus{border-color:#93c5fd;color:var(--text);}
 
 .session-bar{display:flex;align-items:center;gap:10px;min-height:28px;}
 .session-name{font-size:13px;font-weight:700;color:var(--muted);}
@@ -178,6 +313,25 @@ body{
   line-height:1.2;
 }
 .story-thumb img{width:100%;height:100%;object-fit:contain;}
+.thumb-del{
+  position:absolute;top:1px;left:2px;
+  width:15px;height:15px;border-radius:50%;
+  background:rgba(220,38,38,.85);color:white;
+  border:none;font-size:10px;line-height:1;
+  cursor:pointer;display:none;align-items:center;justify-content:center;
+  font-weight:900;z-index:3;padding:0;
+}
+.story-thumb:hover .thumb-del{display:flex;}
+
+.redoBtn{
+  background:#d97706;color:#000000;border:2.5px solid #000000;
+  border-radius:20px;padding:0 20px;height:38px;font-weight:700;
+  cursor:pointer;font-size:16px;font-family:'Patrick Hand',cursive;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .15s,opacity .15s;
+}
+.redoBtn:disabled{opacity:.35;cursor:default;}
+.redoBtn:not(:disabled):hover{background:#b45309;}
 
 .main-image-stage{
   flex:1;min-height:0;position:relative;
@@ -262,7 +416,7 @@ body{
 <div class="body-row">
 
   <div class="step-rail">
-    <button class="step-btn s1" id="btn1" onclick="togglePanel(1)" title="Step 1 – Enter Name">1<span class="dot"></span></button>
+    <button class="step-btn s1" id="btn1" onclick="togglePanel(1)" title="Step 1 – Session Details">1<span class="dot"></span></button>
     <button class="step-btn s2" id="btn2" onclick="togglePanel(2)" title="Step 2 – Upload Images">2<span class="dot"></span></button>
     <button class="step-btn s3" id="btn3" onclick="togglePanel(3)" title="Step 3 – How to use">3</button>
     <div style="width:38px;height:1px;background:#cbd5e1;margin:2px 0;"></div>
@@ -271,10 +425,14 @@ body{
   </div>
 
   <div class="main-content">
+    <div class="content-row">
+
     <div class="viewer">
 
       <div class="session-bar">
         <div class="session-name" id="sessionNameDisplay"></div>
+        <div class="progress-badge" id="progressBadge" style="display:none"></div>
+        <button class="reset-btn" id="resetBtn" onclick="resetSession()" title="Clear session and start over" style="display:none">↺ Reset</button>
       </div>
 
       <div class="strip-wrap">
@@ -288,6 +446,7 @@ body{
           <img id="slide" alt="Story image">
         </div>
         <button class="carousel-arrow right" id="arrowRight" style="display:none" onclick="nextImage()">›</button>
+        <div class="stim-badge" id="stimBadge"></div>
       </div>
 
       <div class="record-bar">
@@ -298,12 +457,34 @@ body{
           <button class="stopBtn" id="stopBtn" disabled onclick="stopRecording()">
             <svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><rect width="11" height="11" rx="2"/></svg> Stop
           </button>
+          <button class="redoBtn" id="redoBtn" disabled onclick="redoRecording()" title="Re-record current image">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2.5A5.5 5.5 0 1 1 1 6.5"/><path d="M2 .5v2.5H4.5"/></svg> Redo
+          </button>
           <button class="downloadBtn" id="downloadBtn" disabled onclick="downloadAll()">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 1v8M3 6.5l3.5 3.5 3.5-3.5"/><path d="M1 11h11"/></svg> Download
           </button>
         </div>
+        <div id="recTimer" class="rec-timer"></div>
         <div id="status" class="status"></div>
       </div>
+
+    </div>
+
+    <!-- Notes panel — right of viewer -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-panel-label">Notes</div>
+      <div class="notes-img-label" id="notesImgLabel"></div>
+      <div class="playback-row">
+        <button class="playBtn" id="playBtn" disabled onclick="togglePlayback()">
+          <svg width="9" height="10" viewBox="0 0 9 10" fill="currentColor"><path d="M0 0l9 5-9 5z"/></svg> Play
+        </button>
+        <span class="playback-time" id="playbackTime"></span>
+      </div>
+      <textarea class="notes-textarea" id="notesArea"
+        placeholder="Log your observations about the session…"
+        oninput="onNotesChange()"></textarea>
+      <div class="notes-saved" id="notesSaved"></div>
+    </div>
 
     </div>
   </div>
@@ -323,24 +504,18 @@ function togglePanel(n) {
   if (openPanel === n) { closeAllPanels(); return; }
   closeAllPanels(false);
   openPanel = n;
-
   const btn = document.getElementById('btn'+n);
   const panel = document.getElementById('panel'+n);
   const rail = document.querySelector('.step-rail');
   const railRect = rail.getBoundingClientRect();
   const btnRect = btn.getBoundingClientRect();
-
-  // Always position panel to the right of the rail with a clear 14px gap
   panel.style.left = (railRect.right + 14) + 'px';
-
-  // Align panel top to button top, clamped to screen
   const panelH = panel.offsetHeight || 200;
   const viewH = window.innerHeight;
   let top = btnRect.top;
   if (top + panelH > viewH - 10) top = viewH - panelH - 10;
   if (top < 10) top = 10;
   panel.style.top = top + 'px';
-
   panel.classList.add('open');
   btn.classList.add('active');
   document.getElementById('overlay').classList.add('active');
@@ -364,25 +539,242 @@ function copyCitation() {
   });
 }
 
-/* ── NAME ── */
+/* ── METADATA GETTERS ── */
+function getSessionId()  { return document.getElementById('sessionId').value.trim(); }
+function getCorpus()     { return document.getElementById('corpusName').value.trim(); }
+function getPartID()     { return document.getElementById('childName').value.trim(); }
+function getAge()        { return document.getElementById('partAge').value.trim(); }
+function getGender()     { return document.getElementById('partGender').value.trim(); }
+function getL1()         { return document.getElementById('partL1').value.trim(); }
+function getL2()         { return document.getElementById('partL2').value.trim(); }
+function getL2Onset()    { return document.getElementById('partL2Onset').value.trim(); }
+function getElicitor()   { return document.getElementById('elicitorId').value.trim(); }
+function getStimulusSet(){ return document.getElementById('stimulusSet').value.trim(); }
+function getTaskType()   { return document.getElementById('taskType').value.trim(); }
+function getWarmup()     { return document.getElementById('warmupDone').checked ? 'yes' : 'no'; }
+
+/* ── SESSION ID ── */
+function generateSessionId() {
+  const now = new Date();
+  const ts = now.toISOString().replace(/[-:T]/g,'').slice(0,12); // YYYYMMDDHHmm
+  const rand = Math.random().toString(36).slice(2,5).toUpperCase();
+  return `SES-${ts}-${rand}`;
+}
+
+function initSessionId() {
+  const el = document.getElementById('sessionId');
+  if (!el.value) el.value = generateSessionId();
+}
+
 function onNameChange() {
-  const val = document.getElementById('childName').value.trim();
+  const val = getPartID();
   const disp = document.getElementById('sessionNameDisplay');
   disp.dataset.name = val;
   disp.innerHTML = val ? `<span>${val}</span>` : '';
   document.getElementById('btn1').classList.toggle('has-data', val.length > 0);
+  autoSave();
+}
+
+function onMetaChange() {
+  const any = getPartID()||getAge()||getGender()||getL1()||getL2()||
+               getL2Onset()||getElicitor()||getStimulusSet()||getTaskType()||getCorpus();
+  document.getElementById('btn1').classList.toggle('has-data', !!any);
+  autoSave();
+}
+
+/* ── NOTES (per-image) ── */
+let notes = {};
+
+function onNotesChange() {
+  notes[index] = document.getElementById('notesArea').value;
+  autoSave();
+  const el = document.getElementById('notesSaved');
+  el.textContent = 'Saved';
+  setTimeout(()=>{ if(el.textContent==='Saved') el.textContent=''; }, 1500);
+}
+
+function updateNotesPanel() {
+  if (!images.length) {
+    document.getElementById('notesImgLabel').textContent = '';
+    document.getElementById('notesArea').value = '';
+    document.getElementById('notesArea').disabled = true;
+    document.getElementById('playBtn').disabled = true;
+    document.getElementById('playbackTime').textContent = '';
+    return;
+  }
+  document.getElementById('notesImgLabel').textContent =
+    `Image ${index+1} of ${images.length}`;
+  document.getElementById('notesArea').value = notes[index] || '';
+  document.getElementById('notesArea').disabled = false;
+  document.getElementById('playBtn').disabled = !recordings[index];
+  document.getElementById('playbackTime').textContent = '';
+  stopAudioPlayback();
+}
+
+/* ── AUDIO PLAYBACK ── */
+let audioPlayer = null;
+let playbackInterval = null;
+
+function togglePlayback() {
+  if (!recordings[index]) return;
+  if (audioPlayer && !audioPlayer.paused) {
+    stopAudioPlayback();
+    return;
+  }
+  stopAudioPlayback();
+  audioPlayer = new Audio(recordings[index].url);
+  const btn = document.getElementById('playBtn');
+  const timeEl = document.getElementById('playbackTime');
+
+  audioPlayer.onplay = () => {
+    btn.innerHTML = '<svg width="9" height="9" viewBox="0 0 9 9" fill="currentColor"><rect width="3" height="9"/><rect x="6" width="3" height="9"/></svg> Pause';
+    playbackInterval = setInterval(()=>{
+      const cur = audioPlayer.currentTime;
+      const dur = audioPlayer.duration || 0;
+      timeEl.textContent = `${fmtTime(cur)} / ${fmtTime(dur)}`;
+    }, 200);
+  };
+  audioPlayer.onended = () => { stopAudioPlayback(); };
+  audioPlayer.onerror = () => { stopAudioPlayback(); };
+  audioPlayer.play();
+}
+
+function stopAudioPlayback() {
+  if (audioPlayer) { audioPlayer.pause(); audioPlayer = null; }
+  clearInterval(playbackInterval); playbackInterval = null;
+  const btn = document.getElementById('playBtn');
+  if (btn) btn.innerHTML = '<svg width="9" height="10" viewBox="0 0 9 10" fill="currentColor"><path d="M0 0l9 5-9 5z"/></svg> Play';
+}
+
+function fmtTime(s) {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s/60), sec = String(Math.floor(s%60)).padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+/* ── SESSION RESET ── */
+function resetSession() {
+  const hasRec = Object.keys(recordings).length > 0;
+  if (hasRec) {
+    const choice = confirm('Download recordings before resetting?\n\nOK = Download then reset\nCancel = Reset without downloading');
+    if (choice) { downloadAll(); }
+  } else {
+    if (!confirm('Reset session? All metadata and images will be cleared.')) return;
+  }
+  // Stop any active recording
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  }
+  stopAudioPlayback();
+  stopTimer();
+
+  // Clear state
+  images = []; index = 0; recordings = {}; timestamps = {}; notes = {};
+  sessionStartMs = null; mediaRecorder = null;
+
+  // Clear form fields
+  ['childName','partAge','partL1','partL2','partL2Onset',
+   'elicitorId','stimulusSet','corpusName'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('partGender').value = '';
+  document.getElementById('partGender').classList.add('unset');
+  document.getElementById('taskType').value = '';
+  document.getElementById('taskType').classList.add('unset');
+  document.getElementById('warmupDone').checked = false;
+
+  // Fresh session ID
+  document.getElementById('sessionId').value = generateSessionId();
+
+  // Clear UI
+  document.getElementById('sessionNameDisplay').innerHTML = '';
+  document.getElementById('storyStrip').innerHTML = '';
+  document.getElementById('emptyStage').style.display = '';
+  document.getElementById('imageBox').style.display = 'none';
+  document.getElementById('arrowRight').style.display = 'none';
+  document.getElementById('progressBadge').style.display = 'none';
+  document.getElementById('stimBadge').style.display = 'none';
+  document.getElementById('resetBtn').style.display = 'none';
+  document.getElementById('fileCount').textContent = '';
+  document.getElementById('recTimer').textContent = '';
+  document.getElementById('btn1').classList.remove('has-data');
+  document.getElementById('btn2').classList.remove('has-data');
+  document.getElementById('notesArea').value = '';
+  document.getElementById('notesSaved').textContent = '';
+  document.getElementById('notesImgLabel').textContent = '';
+
+  // Hide notes panel
+  document.getElementById('notesPanel').classList.remove('visible');
+
+  clearSave();
+  updateUI();
+}
+const SAVE_KEY = 'elicit_autosave';
+let saveToastTimer = null;
+
+function autoSave() {
+  try {
+    const payload = {
+      sessionId: getSessionId(), corpus: getCorpus(),
+      participantId: getPartID(), age: getAge(), gender: getGender(),
+      l1: getL1(), l2: getL2(), l2Onset: getL2Onset(),
+      elicitorId: getElicitor(), stimulusSet: getStimulusSet(),
+      taskType: getTaskType(), warmup: document.getElementById('warmupDone').checked,
+      notes, savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+    showToast();
+  } catch(e) {}
+}
+
+function showToast() {
+  const t = document.getElementById('autosaveToast');
+  t.classList.add('show');
+  clearTimeout(saveToastTimer);
+  saveToastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function tryRestore() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    const hasData = d.participantId||d.age||d.l1||d.l2||d.elicitorId||d.stimulusSet||d.corpus||
+                    (d.notes && Object.keys(d.notes).length);
+    if (!hasData) return;
+    const when = d.savedAt ? new Date(d.savedAt).toLocaleString() : 'a previous session';
+    if (!confirm(`Restore session data from ${when}?\n\nParticipant: ${d.participantId||'—'}  Age: ${d.age||'—'}\nL1: ${d.l1||'—'}  L2: ${d.l2||'—'}\nStimulus set: ${d.stimulusSet||'—'}`)) return;
+    const set = (id, val) => { if(val!==undefined&&val!==null) document.getElementById(id).value = val||''; };
+    if (d.sessionId) set('sessionId', d.sessionId);
+    set('corpusName', d.corpus);
+    set('childName', d.participantId); onNameChange();
+    set('partAge', d.age);
+    if (d.gender) { const s=document.getElementById('partGender'); s.value=d.gender; s.classList.toggle('unset',!d.gender); }
+    set('partL1', d.l1); set('partL2', d.l2); set('partL2Onset', d.l2Onset);
+    set('elicitorId', d.elicitorId); set('stimulusSet', d.stimulusSet);
+    if (d.taskType) { const s=document.getElementById('taskType'); s.value=d.taskType; s.classList.toggle('unset',!d.taskType); }
+    if (d.warmup) document.getElementById('warmupDone').checked = true;
+    if (d.notes) notes = d.notes;
+    onMetaChange();
+  } catch(e) {}
+}
+
+function clearSave() {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
 }
 
 /* ── IMAGES ── */
 let images=[], index=0, recordings={};
+let timestamps={};
+let sessionStartMs = null;
 
 document.addEventListener('DOMContentLoaded', function(){
+  initSessionId();
+  tryRestore();
   document.getElementById('imageLoader').addEventListener('change', function(e){
-    const files = Array.from(e.target.files).slice(0, 10);
+    const files = Array.from(e.target.files);
     if (!files.length) return;
     files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
-
-    // Use FileReader to get data URLs (work in sandboxed iframes unlike blob URLs)
     let loaded = 0;
     const result = new Array(files.length);
     files.forEach((f, i) => {
@@ -391,9 +783,9 @@ document.addEventListener('DOMContentLoaded', function(){
         result[i] = { src: ev.target.result, name: f.name };
         loaded++;
         if (loaded === files.length) {
-          images = result;
-          recordings = {}; index = 0;
-          document.getElementById('fileCount').textContent = images.length+' image'+(images.length!==1?'s':'')+' loaded';
+          images = result; recordings = {}; timestamps = {}; notes = {}; index = 0;
+          document.getElementById('fileCount').textContent =
+            images.length+' image'+(images.length!==1?'s':'')+' loaded';
           document.getElementById('btn2').classList.add('has-data');
           showImage(); updateUI();
         }
@@ -403,12 +795,54 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
+/* ── DELETE IMAGE ── */
+function deleteImage(i, e) {
+  e.stopPropagation();
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    alert('Stop recording before deleting an image.'); return;
+  }
+  const newRec={}, newTs={}, newNotes={};
+  Object.keys(recordings).forEach(k=>{
+    const ki=Number(k); if(ki===i) return;
+    const nk=ki<i?ki:ki-1; newRec[nk]=recordings[k];
+    if(timestamps[k]) newTs[nk]=timestamps[k];
+  });
+  Object.keys(notes).forEach(k=>{
+    const ki=Number(k); if(ki===i) return;
+    newNotes[ki<i?ki:ki-1]=notes[k];
+  });
+  images.splice(i,1); recordings=newRec; timestamps=newTs; notes=newNotes;
+  if(index>=images.length) index=Math.max(0,images.length-1);
+  document.getElementById('fileCount').textContent = images.length
+    ? images.length+' image'+(images.length!==1?'s':'')+' loaded' : '';
+  if(images.length){ showImage(); updateUI(); }
+  else {
+    document.getElementById('storyStrip').innerHTML='';
+    document.getElementById('emptyStage').style.display='';
+    document.getElementById('imageBox').style.display='none';
+    document.getElementById('arrowRight').style.display='none';
+    document.getElementById('progressBadge').style.display='none';
+    document.getElementById('stimBadge').style.display='none';
+    document.getElementById('sessionNameDisplay').innerHTML='';
+    document.getElementById('resetBtn').style.display='none';
+    document.getElementById('notesPanel').classList.remove('visible');
+    updateNotesPanel(); updateUI();
+  }
+}
+
 function showImage(){
-  if (!images.length) return;
+  if(!images.length) return;
   document.getElementById('emptyStage').style.display='none';
   document.getElementById('imageBox').style.display='flex';
   document.getElementById('arrowRight').style.display='flex';
   document.getElementById('slide').src=images[index].src;
+  const badge=document.getElementById('stimBadge');
+  badge.style.display='block';
+  badge.textContent=`${index+1} / ${images.length}`;
+  // Show notes panel and reset button once images are loaded
+  document.getElementById('notesPanel').classList.add('visible');
+  document.getElementById('resetBtn').style.display='';
+  updateNotesPanel();
   buildStrip(); updatePlayback();
 }
 
@@ -419,26 +853,31 @@ function buildStrip(){
     const t=document.createElement('div');
     t.className='story-thumb'+(i===index?' active':'')+(recordings[i]?' recorded':'');
     t.title=img.name; t.onclick=()=>{index=i;showImage();};
+    const del=document.createElement('button');
+    del.className='thumb-del'; del.title='Remove this image'; del.textContent='×';
+    del.onclick=(e)=>deleteImage(i,e); t.appendChild(del);
     const im=document.createElement('img'); im.src=img.src;
     t.appendChild(im); strip.appendChild(t);
   });
   const a=strip.children[index];
   if(a) a.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-
-  // Session complete check
-  const allDone = images.length > 0 && Object.keys(recordings).length === images.length;
-  const bar = document.getElementById('sessionNameDisplay');
+  const badge=document.getElementById('progressBadge');
+  if(images.length){ badge.style.display=''; badge.textContent=(index+1)+' / '+images.length; }
+  else badge.style.display='none';
+  const allDone=images.length>0&&Object.keys(recordings).length===images.length;
+  const bar=document.getElementById('sessionNameDisplay');
+  const pid=getPartID();
   if(allDone){
-    bar.innerHTML = (bar.dataset.name ? `<span>${bar.dataset.name}</span> &nbsp;` : '') +
+    bar.innerHTML=(pid?`<span>${pid}</span> &nbsp;`:'')+
       '<span style="color:#059669;font-weight:700;font-size:13px;">✓ Session complete</span>';
-  }
+  } else { bar.innerHTML=pid?`<span>${pid}</span>`:''; }
 }
 
 function nextImage(){ if(!images.length)return; index=(index+1)%images.length; showImage(); }
 function previousImage(){ if(!images.length)return; index=(index-1+images.length)%images.length; showImage(); }
 
 document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT') return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   if(e.key==='ArrowRight') nextImage();
   if(e.key==='Escape') closeAllPanels();
 });
@@ -449,10 +888,9 @@ function updateUI(){
   const isRec=mediaRecorder&&mediaRecorder.state==='recording';
   document.getElementById('recordBtn').disabled=!hasImages||isRec;
   document.getElementById('stopBtn').disabled=!isRec;
+  document.getElementById('redoBtn').disabled=!recordings[index]||isRec;
   document.getElementById('downloadBtn').disabled=Object.keys(recordings).length===0;
-  if(!hasImages) setStatus('','');
-  else if(isRec) setStatus('Recording…','recording');
-  else setStatus('','');
+  if(!hasImages||!isRec) setStatus('','');
 }
 function setStatus(msg,cls){
   const el=document.getElementById('status');
@@ -460,10 +898,28 @@ function setStatus(msg,cls){
 }
 function updatePlayback(){
   updateUI();
+  document.getElementById('playBtn').disabled=!recordings[index];
+}
+
+/* ── RECORDING TIMER ── */
+let timerInterval=null, timerStart=null;
+function startTimer(){
+  timerStart=Date.now();
+  const el=document.getElementById('recTimer');
+  el.textContent='⏺ 0:00';
+  timerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-timerStart)/1000);
+    el.textContent=`⏺ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  },500);
+}
+function stopTimer(){
+  clearInterval(timerInterval); timerInterval=null;
+  document.getElementById('recTimer').textContent='';
 }
 
 /* ── RECORDING → WAV ── */
 let mediaRecorder=null, audioCtx=null, recordingStream=null, pcmBuffers=[], sampleRate=44100;
+let recordingImageIndex=null, recordingOnsetMs=null;
 
 async function startRecording(){
   try{
@@ -472,31 +928,35 @@ async function startRecording(){
     sampleRate=audioCtx.sampleRate;
     const source=audioCtx.createMediaStreamSource(recordingStream);
     const processor=audioCtx.createScriptProcessor(4096,1,1);
-    pcmBuffers=[];
-    processor.onaudioprocess=e=>{
-      pcmBuffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
-    };
+    pcmBuffers=[]; recordingImageIndex=index; recordingOnsetMs=performance.now();
+    if(sessionStartMs===null) sessionStartMs=recordingOnsetMs;
+    processor.onaudioprocess=e=>{pcmBuffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));};
     source.connect(processor); processor.connect(audioCtx.destination);
     mediaRecorder={state:'recording',stop:()=>finishRecording(processor,source)};
-    updateUI();
-    document.getElementById('recordBtn').innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="#fca5a5"><circle cx="5" cy="5" r="5" class="rec-dot-svg"/></svg> Recording';
-    // pulse the dot
-    const dot = document.getElementById('recordBtn').querySelector('circle');
-    if(dot) dot.style.animation='pulse-red 1s infinite';
-  } catch(err){
-    setStatus('Microphone access denied. Check browser permissions.','');
-    console.error(err);
-  }
+    startTimer(); updateUI();
+    document.getElementById('recordBtn').innerHTML=
+      '<svg width="10" height="10" viewBox="0 0 10 10" fill="#fca5a5"><circle cx="5" cy="5" r="5"/></svg> Recording';
+  }catch(err){ setStatus('Microphone access denied. Check browser permissions.',''); console.error(err); }
 }
 
 function stopRecording(){
   if(mediaRecorder&&mediaRecorder.state==='recording'){
-    mediaRecorder.stop();
-    document.getElementById('recordBtn').innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6"/></svg> Record';
+    mediaRecorder.stop(); stopTimer();
+    document.getElementById('recordBtn').innerHTML=
+      '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6"/></svg> Record';
   }
 }
 
+function redoRecording(){
+  if(!recordings[index]) return;
+  if(!confirm(`Re-record image ${index+1}?\n\nThe existing recording will be permanently replaced.`)) return;
+  if(recordings[index].url) URL.revokeObjectURL(recordings[index].url);
+  delete recordings[index]; delete timestamps[index];
+  buildStrip(); updateUI(); startRecording();
+}
+
 function finishRecording(processor,source){
+  const offsetMs=performance.now();
   processor.disconnect(); source.disconnect();
   if(recordingStream) recordingStream.getTracks().forEach(t=>t.stop());
   audioCtx.close();
@@ -505,8 +965,14 @@ function finishRecording(processor,source){
   let off=0; for(const b of pcmBuffers){merged.set(b,off);off+=b.length;}
   const wavBlob=encodeWAV(merged,sampleRate);
   const url=URL.createObjectURL(wavBlob);
-  recordings[index]={blob:wavBlob,url};
-  mediaRecorder=null;
+  const recIdx=recordingImageIndex!==null?recordingImageIndex:index;
+  recordings[recIdx]={blob:wavBlob,url};
+  timestamps[recIdx]={
+    onset_ms:Math.round(recordingOnsetMs-sessionStartMs),
+    offset_ms:Math.round(offsetMs-sessionStartMs),
+    duration_ms:Math.round(offsetMs-recordingOnsetMs)
+  };
+  recordingImageIndex=null; recordingOnsetMs=null; mediaRecorder=null;
   updatePlayback(); buildStrip();
 }
 
@@ -529,26 +995,104 @@ function encodeWAV(samples,rate){
   return new Blob([buf],{type:'audio/wav'});
 }
 
+/* ── CHAT HEADER EXPORT ── */
+function buildCHATHeader(){
+  const pid    = getPartID() || 'PAR';
+  const age    = getAge()    || '';
+  const gender = getGender() || '';
+  const l1     = getL1()     || 'und';
+  const elicit = getElicitor()|| 'INV';
+  const stim   = getStimulusSet()||'';
+  const task   = getTaskType()||'';
+  const warmup = getWarmup();
+  const corpus = getCorpus() || 'Elicit';
+  const sesId  = getSessionId() || '';
+  const today  = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).replace(/ /g,'-');
+
+  const sexMap = {'Male':'male','Female':'female','Unspecified':'unspecified','':`unspecified`};
+  const sex = sexMap[gender] || 'unspecified';
+  let chatAge = age ? age+';' : '';
+
+  const lines = [
+    `@UTF8`,
+    `@Begin`,
+    `@Languages:\t${l1}`,
+    `@Corpus:\t${corpus}`,
+    sesId ? `@Comment:\tSession ID: ${sesId}` : '',
+    `@Participants:\tCHI ${pid} Child, ${elicit} Investigator Investigator`,
+    `@ID:\t${l1}|${corpus}|CHI|${chatAge}|${sex}|||Child|||`,
+    `@ID:\t${l1}|${corpus}|${elicit}|||||Investigator|||`,
+    `@Media:\t${(pid).replace(/[^a-z0-9_]/gi,'_')}, audio`,
+    `@Date:\t${today}`,
+    stim  ? `@Situation:\t${task ? task+' — ' : ''}${stim}` : (task ? `@Situation:\t${task}` : ''),
+    warmup==='yes' ? `@Comment:\tWarm-up administered` : '',
+    ``,
+    `@Comment:\tTranscript generated by Elicit v1.0 (https://priyaprithiviraj.github.io/elicit)`,
+    ``,
+    `; ── Paste transcription below ──`,
+    ``,
+    `@End`,
+  ].filter(l=>l!==null&&l!=='');
+
+  return lines.join('\n');
+}
+
 /* ── DOWNLOAD ── */
 function downloadAll(){
   const keys=Object.keys(recordings); if(!keys.length) return;
-  const name=document.getElementById('childName').value.trim()||'session';
-  const safe=name.replace(/[^a-z0-9_\-]/gi,'_');
+  const name    = getPartID()||'session';
+  const safe    = name.replace(/[^a-z0-9_\-]/gi,'_');
+  const sesId   = getSessionId()||'';
+  const corpus  = getCorpus()||'';
+  const age     = getAge()||''; const gender=getGender()||'';
+  const l1=getL1()||''; const l2=getL2()||''; const l2onset=getL2Onset()||'';
+  const elicitor=getElicitor()||''; const stimset=getStimulusSet()||'';
+  const tasktype=getTaskType()||''; const warmup=getWarmup();
+  const recDate=new Date().toISOString().slice(0,10);
+
+  // WAV files
   keys.forEach(i=>{
     const a=document.createElement('a');
     a.href=recordings[i].url;
     a.download=`${safe}_image_${String(Number(i)+1).padStart(2,'0')}.wav`;
     a.click();
   });
+
+  // CSV — session_id and corpus first, then all other metadata
+  let csv='session_id,corpus,participant_id,age,gender,l1,l2,l2_onset,elicitor_id,stimulus_set,task_type,warmup,date,image_number,filename,onset_ms,offset_ms,duration_ms,notes\n';
+  keys.slice().sort((a,b)=>Number(a)-Number(b)).forEach(i=>{
+    const imgNum=String(Number(i)+1).padStart(2,'0');
+    const filename=`${safe}_image_${imgNum}.wav`;
+    const ts=timestamps[i]||{onset_ms:'',offset_ms:'',duration_ms:''};
+    const noteText=(notes[i]||'').replace(/"/g,'""');
+    csv+=`${sesId},${corpus},${name},${age},${gender},${l1},${l2},${l2onset},${elicitor},${stimset},${tasktype},${warmup},${recDate},${imgNum},${filename},${ts.onset_ms},${ts.offset_ms},${ts.duration_ms},"${noteText}"\n`;
+  });
+  const csvBlob=new Blob([csv],{type:'text/csv'});
+  const csvUrl=URL.createObjectURL(csvBlob);
+  const ca=document.createElement('a');
+  ca.href=csvUrl; ca.download=`${safe}_session.csv`; ca.click();
+  URL.revokeObjectURL(csvUrl);
+
+  // CHAT header .cha file
+  const chaContent=buildCHATHeader();
+  const chaBlob=new Blob([chaContent],{type:'text/plain'});
+  const chaUrl=URL.createObjectURL(chaBlob);
+  const cb=document.createElement('a');
+  cb.href=chaUrl; cb.download=`${safe}.cha`; cb.click();
+  URL.revokeObjectURL(chaUrl);
+
+  clearSave();
 }
 </script>
+
+
 <!-- PANELS — direct children of body so overflow:hidden on body-row never clips them -->
 <div class="slide-panel" id="panelA">
   <div class="panel-label">About</div>
   <div style="font-size:12px;color:#374151;line-height:1.7;">
     <p style="margin-bottom:8px;"><strong>Elicit</strong> is a browser-based tool for collecting spoken narratives from participants using picture stimuli.</p>
     <p style="margin-bottom:8px;">Upload images, record responses, and download the audio as <em>.wav</em> files for analysis.</p>
-    <p>Built by <strong>Priya Prithiviraj</strong>, 2026.<br>
+    <p>Built by <strong>Priya Prithiviraj</strong>, 2026. Version 1.0.<br>
     <a href="https://github.com/priyaprithiviraj" target="_blank" style="color:#1e293b;">github.com/priyaprithiviraj</a></p>
   </div>
 </div>
@@ -565,9 +1109,81 @@ function downloadAll(){
   </div>
 </div>
 
-<div class="slide-panel" id="panel1">
-  <div class="panel-label">① Name</div>
-  <input class="name-input" type="text" id="childName" placeholder="Enter name…" oninput="onNameChange()" autocomplete="off">
+<div class="slide-panel" id="panel1" style="max-height:90vh;">
+  <div class="panel-label">① Session Details</div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="sessionId">Session ID</label>
+      <input class="meta-input-ro" type="text" id="sessionId" oninput="onMetaChange()" autocomplete="off" title="Auto-generated. Edit to override.">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="corpusName">Corpus</label>
+      <input class="meta-input" type="text" id="corpusName" placeholder="e.g. ELICIT_2026" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="childName">Participant ID</label>
+      <input class="meta-input" type="text" id="childName" placeholder="Enter ID or name…" oninput="onNameChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="partAge">Age</label>
+      <input class="meta-input" type="text" id="partAge" placeholder="in years" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="partGender">Gender</label>
+      <select class="meta-select unset" id="partGender" onchange="this.classList.toggle('unset',this.value===''); onMetaChange();">
+        <option value="">— select —</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Unspecified">Unspecified</option>
+      </select>
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="partL1">L1 (First Language)</label>
+      <input class="meta-input" type="text" id="partL1" placeholder="e.g. Telugu" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="partL2">L2 (Second Language)</label>
+      <input class="meta-input" type="text" id="partL2" placeholder="e.g. English" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="partL2Onset">Age of L2 Onset</label>
+      <input class="meta-input" type="text" id="partL2Onset" placeholder="in years" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="elicitorId">Elicitor ID</label>
+      <input class="meta-input" type="text" id="elicitorId" placeholder="e.g. INV01" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="stimulusSet">Stimulus Set</label>
+      <input class="meta-input" type="text" id="stimulusSet" placeholder="e.g. The Frog Story" oninput="onMetaChange()" autocomplete="off">
+    </div>
+
+    <div class="meta-field">
+      <label class="meta-label" for="taskType">Task Type</label>
+      <select class="meta-select unset" id="taskType" onchange="this.classList.toggle('unset',this.value===''); onMetaChange();">
+        <option value="">— select —</option>
+        <option value="Narration">Narration</option>
+        <option value="Retelling">Retelling</option>
+        <option value="Description">Description</option>
+        <option value="Procedural description">Procedural description</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="warmup-row">
+      <input type="checkbox" id="warmupDone" onchange="onMetaChange()">
+      <label for="warmupDone">Warm-up administered</label>
+    </div>
+
 </div>
 
 <div class="slide-panel" id="panel2">
@@ -575,7 +1191,7 @@ function downloadAll(){
   <label class="upload-zone">
     <div class="up-icon">🖼️</div>
     <p>Choose image files</p>
-    <small>JPG, PNG, GIF — up to 10 images</small>
+    <small>JPG, PNG, GIF — any number of images</small>
     <input type="file" id="imageLoader" multiple accept="image/*">
   </label>
   <div class="file-count" id="fileCount"></div>
@@ -584,13 +1200,17 @@ function downloadAll(){
 <div class="slide-panel" id="panel3">
   <div class="panel-label">③ How to use</div>
   <div class="instr-body">
-    <div class="step-row"><div class="num">1</div><div>Navigate images with the <strong>→</strong> arrow.</div></div>
-    <div class="step-row"><div class="num">2</div><div>Press <strong>Record</strong> to begin. Press <strong>Stop</strong> when done.</div></div>
-    <div class="step-row"><div class="num">3</div><div>A tick mark over the image confirms a saved recording.</div></div>
-    <div class="step-row"><div class="num">4</div><div>Press <strong>Download</strong> to save all recordings.</div></div>
-    <div class="instr-tip">The recording will continue across images unless manually stopped. Stop and re-record per image if you want to save as separate files.</div>
+    <div class="step-row"><div class="num">1</div><div>Enter session details using button <strong>1</strong> — participant ID, age, language, stimulus set, and so on. A Session ID is auto-generated but can be edited.</div></div>
+    <div class="step-row"><div class="num">2</div><div>Upload story images using button <strong>2</strong>. Navigate with the <strong>→</strong> arrow. Hover a thumbnail and press <strong>×</strong> to remove an image.</div></div>
+    <div class="step-row"><div class="num">3</div><div>Press <strong>Record</strong> to begin. Press <strong>Stop</strong> when done. A tick mark on the thumbnail confirms a saved recording.</div></div>
+    <div class="step-row"><div class="num">4</div><div>To re-record the current image, press <strong>Redo</strong>. Press <strong>Play</strong> in the Notes panel to review any recording before downloading.</div></div>
+    <div class="step-row"><div class="num">5</div><div>Press <strong>Download</strong> to export <em>.wav</em> files, a <em>_session.csv</em> with full metadata and timestamps, and a <em>.cha</em> CHAT header file ready for CLAN.</div></div>
+    <div class="step-row"><div class="num">6</div><div>Use <strong>↺ Reset</strong> in the session bar to clear all data and start a new participant. You will be prompted to download first if recordings exist.</div></div>
+    <div class="instr-tip">Recording continues across images unless manually stopped. Stop and re-record per image to save separate files.</div>
   </div>
 </div>
+
+<div class="autosave-toast" id="autosaveToast">✓ Autosaved</div>
 
 </body>
 </html>
