@@ -14,7 +14,7 @@ A standards-compliant browser with support for the Web Audio API and MediaRecord
 
 Step 1: Before recording, click on button 1 and enter the session metadata into the Session Details panel. A session ID is generated automatically in the format SES-{timestamp}-{random}, but it can be edited. There is a checkbox to record whether any warm-up protocol was administered. All metadata fields are optional but are recommended for research use, as they populate both the CSV output and the CHAT header.
 
-![Step 1](Screenshot 1.jpg)
+! [Step 1](Screenshot 1.jpg)
 
 **Step 2: Click on button 2 and upload the stimulus images from the local file system (JPG, PNG, or GIF format). The images are sorted alphanumerically upon loading and presented in a forward-only carousel to prevent inadvertent re-exposure to earlier stimuli. However, individual images can be displayed or deleted by hovering over the thumbnail and selecting the control, provided recording is not in progress.
 
