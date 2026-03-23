@@ -12,21 +12,21 @@ A standards-compliant browser with support for the Web Audio API and MediaRecord
 
 ## How to Use
 
-**Step 1: Before recording, click on button 1 and enter the session metadata into the Session Details panel. A session ID is generated automatically in the format SES-{timestamp}-{random}, but it can be edited. There is a checkbox to record whether any warm-up protocol was administered. All metadata fields are optional but are recommended for research use, as they populate both the CSV output and the CHAT header.**
+Step 1: Before recording, click on button 1 and enter the session metadata into the Session Details panel. A session ID is generated automatically in the format SES-{timestamp}-{random}, but it can be edited. There is a checkbox to record whether any warm-up protocol was administered. All metadata fields are optional but are recommended for research use, as they populate both the CSV output and the CHAT header.
 
-![Step 1](screenshot_1.png)
+![Step 1](screenshot 1.jpg)
 
-**Step 2: Click on button 2 and upload the stimulus images from the local file system (JPG, PNG, or GIF format). The images are sorted alphanumerically upon loading and presented in a forward-only carousel to prevent inadvertent re-exposure to earlier stimuli. However, individual images can be displayed or deleted by hovering over the thumbnail and selecting the control, provided recording is not in progress.**
+**Step 2: Click on button 2 and upload the stimulus images from the local file system (JPG, PNG, or GIF format). The images are sorted alphanumerically upon loading and presented in a forward-only carousel to prevent inadvertent re-exposure to earlier stimuli. However, individual images can be displayed or deleted by hovering over the thumbnail and selecting the control, provided recording is not in progress.
 
-![Step 2](screenshot_2.png)
+![Step 2](screenshot 2.jpg)
 
-**Step 3: Click on the Record button to initiate audio capture via the device microphone. A timer will display the elapsed recording time. Click on the Stop button to terminate recording and save the audio for the current session. A tick mark on the thumbnail indicates a completed recording for that image. The Redo button will replace the recording for the current image following user confirmation. Recording will continue across images unless manually stopped; to produce a separate file per image, the user should stop recording after each image before advancing.**
+Step 3: Click on the Record button to initiate audio capture via the device microphone. A timer will display the elapsed recording time. Click on the Stop button to terminate recording and save the audio for the current session. A tick mark on the thumbnail indicates a completed recording for that image. The Redo button will replace the recording for the current image following user confirmation. Recording will continue across images unless manually stopped; to produce a separate file per image, the user should stop recording after each image before advancing.
 
-**The Notes panel, displayed to the right of the image viewer, can be used to note down observations. The notes are stored per image and are written to the session CSV on export. Click on the Play button for a playback of the current audio recording to verify audio quality before downloading.**
+The Notes panel, displayed to the right of the image viewer, can be used to note down observations. The notes are stored per image and are written to the session CSV on export. Click on the Play button for a playback of the current audio recording to verify audio quality before downloading.
 
-![Step 3](screenshot_3.png)
+![Step 3](screenshot 3.jpg)
 
-**Click on the Download button to export all the output files for the session (see Output section). The autosave state will be cleared following a successful download. The Reset button, displayed in the session bar once images have been loaded, clears all recordings, images, and metadata. If recordings are present, the user is prompted to download before proceeding.**
+Click on the Download button to export all the output files for the session (see Output section). The autosave state will be cleared following a successful download. The Reset button, displayed in the session bar once images have been loaded, clears all recordings, images, and metadata. If recordings are present, the user is prompted to download before proceeding.
 
 ---
 
@@ -34,15 +34,15 @@ A standards-compliant browser with support for the Web Audio API and MediaRecord
 
 Three file types are exported per session.
 
-**1. WAV audio files** 
+1. WAV audio files
 
 One file per image, recorded in mono at 16-bit PCM, 44,100 Hz. Files are named sequentially as {ParticipantID} _ image_01.wav, {ParticipantID} _ image_02.wav, etc. This format is compatible with CLAN, Praat, and SALT.
 
-**2. Session CSV ({ParticipantID}_session.csv)** 
+2. Session CSV ({ParticipantID}_session.csv)
 
 One row per image. The file contains the following columns: session_id, corpus, participant_id, age, gender, l1, l2, l2_onset, elicitor_id, stimulus_set, task_type, warmup, date, image_number, filename, onset_ms, offset_ms, duration_ms, notes. Onset and offset times are recorded in milliseconds relative to the first recording event in the session.
 
-**3. CHAT header file ({ParticipantID}.cha)** 
+3. CHAT header file ({ParticipantID}.cha)
 
 A header file in CLAN CHAT format (.cha), pre-populated with @Languages, @Corpus, @Participants, @ID lines for both the child participant (CHI) and investigator (INV), @Media, @Date, and @Situation. The corpus field in the CHAT header is drawn from the Corpus entry in the Session Details panel. The user can add the transcript below the header and before the @End line.
 
