@@ -1,8 +1,10 @@
 # Elicit
 
-Elicit is a browser-based instrument for the collection of spoken language samples using pictorial stimuli. It is intended for researchers, clinicians, and educators who require a lightweight, portable solution for eliciting and recording spoken language samples across a sequence of images. The tool runs as a single HTML file and requires no installation, server infrastructure, or internet connection during use. All audio recording, processing, and file export are performed locally within the browser; no participant data is transmitted to any external system at any point.
+Elicit is a browser-based tool for researchers, clinicians, and educators who need a lightweight, portable solution to elicit and record speech for language sample analysis. It can support speech production or comprehension tasks that involve pictorial stimuli presented individually or sequentially. 
 
-The tool was developed with cross-linguistic and multilingual research contexts in mind. Session metadata (including participant demographics, language background, elicitor information, stimulus set, and task type) is recorded alongside audio onset and offset timestamps in a single exportable CSV file. A CLAN-compatible CHAT header file is generated automatically from the session metadata, reducing the manual preparation required before transcription.
+Elicit was developed specifically for use with bilingual and multilingual populations, and is designed to also collect demographic and language background metadata that such research requires. The session metadata (including participant demographics, language background, elicitor information, stimulus set, and task type) is recorded alongside audio onset and offset timestamps in a single exportable CSV file. A CLAN-compatible CHAT header file with prepopulated lines is also generated automatically from the session metadata, which can significantly reduce the manual preparation and time before transcription.
+
+To support data collection in low-resource or access-constrained contexts, Elicit runs as a single HTML file and requires no installation, server infrastructure, or even internet connection (if downloaded). All audio recording, processing, and file export are performed locally within the browser, and no participant data is transmitted to any external system at any point.
 
 ## System Requirements
 
@@ -42,15 +44,13 @@ One row per image. The file contains the following columns: session_id, corpus, 
 
 **3. CHAT header file ({ParticipantID}.cha)** 
 
-A header file in CLAN CHAT format, pre-populated with @Languages, @Corpus, @Participants, @ID lines for both the child participant (CHI) and investigator (INV), @Media, @Date, and @Situation. The corpus field in the CHAT header is drawn from the Corpus entry in the Session Details panel. The user can add the transcript below the header and before the @End line. Elicit runs entirely in the browser as a single HTML file with no installation, server, or internet connection. Users can upload picture stimuli, record participant responses, and download the audio as WAV files for subsequent analysis.
+A header file in CLAN CHAT format (.cha), pre-populated with @Languages, @Corpus, @Participants, @ID lines for both the child participant (CHI) and investigator (INV), @Media, @Date, and @Situation. The corpus field in the CHAT header is drawn from the Corpus entry in the Session Details panel. The user can add the transcript below the header and before the @End line.
 
 ---
 
 ## Notes for Researchers
 
-Elicit does not transmit data. Audio recording, processing, and export are performed entirely within the browser environment on the researcher's device. The tool does not retain session data between uses. An autosave mechanism writes session metadata and notes to the browser's localStorage as a safeguard against data loss; this stored data is cleared automatically following a successful download or session reset. The WAV format was chosen for compatibility with speech analysis software, including CLAN, Praat, and Audacity. The recording is mono, 16-bit, at 44,100 Hz.
-
-Researchers are responsible for obtaining appropriate ethical approval and informed consent from participants or their guardians before use.
+Researchers are responsible for obtaining appropriate ethical approval and informed consent from the participants.
 
 ---
 
