@@ -2,7 +2,7 @@
 
 Elicit is a browser-based tool for researchers, clinicians, and educators who need a lightweight, portable solution to elicit and record speech for language sample analysis. It can support speech production or comprehension tasks that involve pictorial stimuli presented individually or sequentially. 
 
-Elicit was developed specifically for use with bilingual and multilingual populations, and is designed to also collect demographic and language background metadata that such research requires. The session metadata (including participant demographics, language background, elicitor information, stimulus set, and task type) is recorded alongside audio onset and offset timestamps in a single exportable CSV file. A CLAN-compatible CHAT header file with prepopulated lines is also generated automatically from the session metadata, which can significantly reduce the manual preparation and time before transcription.
+Elicit was developed specifically for use with bilingual and multilingual populations, and is also designed to collect demographic and language background metadata that such research requires. The session metadata (including participant demographics, language background, elicitor information, stimulus set, and task type) is recorded alongside audio onset and offset timestamps in a single exportable CSV file. A CLAN-compatible CHAT header file with prepopulated lines is also automatically generated from the session metadata, which can significantly reduce manual preparation time before transcription.
 
 To support data collection in low-resource or access-constrained contexts, Elicit runs as a single HTML file and requires no installation, server infrastructure, or even internet connection (if downloaded). All audio recording, processing, and file export are performed locally within the browser, and no participant data is transmitted to any external system at any point.
 
@@ -23,9 +23,11 @@ Step 2: Click on button 2 and upload the stimulus images from the local file sys
 
 Step 3: Click on the Record button to initiate audio capture via the device microphone. A timer will display the elapsed recording time. Click on the Stop button to terminate recording and save the audio for the current session. A tick mark on the thumbnail indicates a completed recording for that image. The Redo button will replace the recording for the current image following user confirmation. Recording will continue across images unless manually stopped; to produce a separate file per image, the user should stop recording after each image before advancing.
 
+![Screenshot 3](https://github.com/user-attachments/assets/e49e083a-2bad-424c-949d-1e8a5a8344a2)
+
 The Notes panel, displayed to the right of the image viewer, can be used to note down observations. The notes are stored per image and are written to the session CSV on export. Click on the Play button for a playback of the current audio recording to verify audio quality before downloading.
 
-![Screenshot 3](https://github.com/user-attachments/assets/e49e083a-2bad-424c-949d-1e8a5a8344a2)
+![Screenshot 4](https://github.com/user-attachments/assets/3729094d-0492-4411-9aec-b6828f20d47f)
 
 Click on the Download button to export all the output files for the session (see Output section). The autosave state will be cleared following a successful download. The Reset button, displayed in the session bar once images have been loaded, clears all recordings, images, and metadata. If recordings are present, the user is prompted to download before proceeding.
 
@@ -51,7 +53,7 @@ A header file in CLAN CHAT format (.cha), pre-populated with @Languages, @Corpus
 
 ## Notes for Researchers
 
-Researchers are responsible for obtaining appropriate ethical approval and informed consent from the participants.
+Users are responsible for obtaining appropriate ethical approval and informed consent from the participants. Child assent and parental consent must be taken when eliciting/recording speech from children.
 
 ---
 
