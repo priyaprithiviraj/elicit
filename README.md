@@ -6,11 +6,11 @@ Elicit was developed specifically for use with bilingual and multilingual popula
 
 To support data collection in low-resource or access-constrained contexts, Elicit runs as a single HTML file and requires no installation, server infrastructure, or even internet connection (if downloaded). All audio recording, processing, and file export are performed locally within the browser, and no participant data is transmitted to any external system at any point.
 
-## System Requirements
+### System Requirements
 
 A standards-compliant browser with support for the Web Audio API and MediaRecorder (Chrome or Edge version 90 or later is recommended; Firefox and Safari are also supported). Microphone access is required and must be granted by the user. The file must be opened as a local file or served over HTTPS for microphone access to function; this constraint is imposed by browser security policy, not by the tool itself.
 
-## How to Use
+### How to Use
 
 Step 1: Before recording, click on button 1 and enter the session metadata into the Session Details panel. A session ID is generated automatically in the format SES-{timestamp}-{random}, but it can be edited. There is a checkbox to record whether any warm-up protocol was administered. All metadata fields are optional but are recommended for research use, as they populate both the CSV output and the CHAT header.
 
@@ -27,37 +27,37 @@ Step 3: Click on the Record button to initiate audio capture via the device micr
 
 The Notes panel, displayed to the right of the image viewer, can be used to note down observations. The notes are stored per image and are written to the session CSV on export. Click on the Play button for a playback of the current audio recording to verify audio quality before downloading.
 
-![Screenshot 4](https://github.com/user-attachments/assets/3729094d-0492-4411-9aec-b6828f20d47f)
+![Screenshot 4](https://github.com/user-attachments/assets/f486abe7-6ace-4881-9ef4-1796fdc51dbb)
 
 Click on the Download button to export all the output files for the session (see Output section). The autosave state will be cleared following a successful download. The Reset button, displayed in the session bar once images have been loaded, clears all recordings, images, and metadata. If recordings are present, the user is prompted to download before proceeding.
 
 ---
 
-## Output
+### Output
 
 Three file types are exported per session.
 
 1. WAV audio files
 
-One file per image, recorded in mono at 16-bit PCM, 44,100 Hz. Files are named sequentially as {ParticipantID} _ image_01.wav, {ParticipantID} _ image_02.wav, etc. This format is compatible with CLAN, Praat, and SALT.
+A session, which spans from "record" to "stop", produces a single WAV audio file for each image. These files are recorded in mono format, using 16-bit PCM at a sample rate of 44,100 Hz. The files are named in sequence as {ParticipantID} image01.wav, {ParticipantID} image02.wav, and so on. This file format is compatible with CLAN, Praat, and SALT.
 
 2. Session CSV ({ParticipantID}_session.csv)
 
-One row per image. The file contains the following columns: session_id, corpus, participant_id, age, gender, l1, l2, l2_onset, elicitor_id, stimulus_set, task_type, warmup, date, image_number, filename, onset_ms, offset_ms, duration_ms, notes. Onset and offset times are recorded in milliseconds relative to the first recording event in the session.
+The session CSV file will include the following columns for each image: session_id, corpus, participant_id, age, gender, l1, l2, l2_onset, elicitor_id, stimulus_set, task_type, warmup, date, image_number, filename, onset_ms, offset_ms, duration_ms, and notes. The onset and offset times are recorded in milliseconds, measured from the first recording event in the session. The file includes columns for transcripts and notes related to each image. Both fields are optional, and any cells without content will remain empty.
 
-3. CHAT header file ({ParticipantID}.cha)
+3. CHAT transcript file ({ParticipantID}.cha)
 
-A header file in CLAN CHAT format (.cha), pre-populated with @Languages, @Corpus, @Participants, @ID lines for both the child participant (CHI) and investigator (INV), @Media, @Date, and @Situation. The corpus field in the CHAT header is drawn from the Corpus entry in the Session Details panel. The user can add the transcript below the header and before the @End line.
+A transcript file in CLAN CHAT format (.cha) is generated for download and is pre-populated with headers, including @Languages, @Corpus, @Participants, and @ID lines for both the child participant (CHI) and the investigator (INV), as well as @Media, @Date, and @Situation. The corpus field in the CHAT header is derived from the Corpus entry in the Session Details panel. Transcripts consisting of multiple sentences are divided into separate utterance lines. For images without any entered transcript, a placeholder comment is used. If no transcript content has been provided for the session, the file will feature a prompt stating "Paste transcription below" in its place. Regardless of this, the header will remain complete, ensuring that the file is ready to be opened in CLAN. The user has the option to manually add the transcript beneath the header and before the @End line, or they can utilise CLAN to do so.
 
 ---
 
-## Notes for Researchers
+### Notes for Researchers
 
 Users are responsible for obtaining appropriate ethical approval and informed consent from the participants. Child assent and parental consent must be taken when eliciting/recording speech from children.
 
 ---
 
-## Citation
+### Citation
 
 If you use Elicit in research or adapt it for your own work, please cite:
 
@@ -65,6 +65,6 @@ If you use Elicit in research or adapt it for your own work, please cite:
 
 ---
 
-## License
+### License
 
 MIT License © 2026 Priya Prithiviraj. See LICENSE for full terms.
