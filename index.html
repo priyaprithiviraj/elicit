@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elicit – A Picture-Based Elicitation Tool</title>
+<title>Elicit – Picture-Based Elicitation Interface</title>
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -180,16 +180,16 @@ body{
   background:white;border-radius:18px;
   box-shadow:0 6px 28px rgba(0,0,0,.09);
   border:2px solid #1e293b;
-  padding:12px;display:none;flex-direction:column;gap:8px;overflow:hidden;
+  padding:12px;display:none;flex-direction:column;gap:6px;overflow:hidden;
 }
 .notes-panel.visible{display:flex;}
 .notes-panel-label{
   font-size:10px;font-weight:700;text-transform:uppercase;
   letter-spacing:.08em;color:#1e293b;flex-shrink:0;
 }
-.notes-image-label{
-  font-size:10px;font-weight:600;color:var(--muted);
-  flex-shrink:0;min-height:14px;
+.notes-section-label{
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;color:#64748b;flex-shrink:0;margin-top:4px;
 }
 .notes-textarea{
   flex:1;width:100%;border:1.5px solid var(--border);
@@ -197,7 +197,7 @@ body{
   font-size:12px;font-family:'Nunito',sans-serif;
   color:var(--text);resize:none;outline:none;
   transition:border-color .2s;line-height:1.6;
-  background:var(--light);
+  background:var(--light);min-height:0;
 }
 .notes-textarea:focus{border-color:#93c5fd;background:white;}
 .notes-textarea::placeholder{color:#b0bec5;}
@@ -472,17 +472,25 @@ body{
 
     <!-- Notes panel — right of viewer -->
     <div class="notes-panel" id="notesPanel">
-      <div class="notes-panel-label">Notes</div>
-      <div class="notes-img-label" id="notesImgLabel"></div>
+      <div class="notes-panel-label" id="notesImgLabel">Notes</div>
+
       <div class="playback-row">
         <button class="playBtn" id="playBtn" disabled onclick="togglePlayback()">
           <svg width="9" height="10" viewBox="0 0 9 10" fill="currentColor"><path d="M0 0l9 5-9 5z"/></svg> Play
         </button>
         <span class="playback-time" id="playbackTime"></span>
       </div>
+
+      <div class="notes-section-label">Transcript</div>
+      <textarea class="notes-textarea" id="transcriptArea"
+        placeholder="Type transcript here…"
+        oninput="onTranscriptChange()"></textarea>
+
+      <div class="notes-section-label">Notes</div>
       <textarea class="notes-textarea" id="notesArea"
         placeholder="Log your observations about the session…"
         oninput="onNotesChange()"></textarea>
+
       <div class="notes-saved" id="notesSaved"></div>
     </div>
 
@@ -582,12 +590,23 @@ function onMetaChange() {
   autoSave();
 }
 
-/* ── NOTES (per-image) ── */
+/* ── NOTES & TRANSCRIPT (per-image) ── */
 let notes = {};
+let transcripts = {};
 
 function onNotesChange() {
   notes[index] = document.getElementById('notesArea').value;
   autoSave();
+  showSaved();
+}
+
+function onTranscriptChange() {
+  transcripts[index] = document.getElementById('transcriptArea').value;
+  autoSave();
+  showSaved();
+}
+
+function showSaved() {
   const el = document.getElementById('notesSaved');
   el.textContent = 'Saved';
   setTimeout(()=>{ if(el.textContent==='Saved') el.textContent=''; }, 1500);
@@ -595,7 +614,9 @@ function onNotesChange() {
 
 function updateNotesPanel() {
   if (!images.length) {
-    document.getElementById('notesImgLabel').textContent = '';
+    document.getElementById('notesImgLabel').textContent = 'Notes';
+    document.getElementById('transcriptArea').value = '';
+    document.getElementById('transcriptArea').disabled = true;
     document.getElementById('notesArea').value = '';
     document.getElementById('notesArea').disabled = true;
     document.getElementById('playBtn').disabled = true;
@@ -604,6 +625,8 @@ function updateNotesPanel() {
   }
   document.getElementById('notesImgLabel').textContent =
     `Image ${index+1} of ${images.length}`;
+  document.getElementById('transcriptArea').value = transcripts[index] || '';
+  document.getElementById('transcriptArea').disabled = false;
   document.getElementById('notesArea').value = notes[index] || '';
   document.getElementById('notesArea').disabled = false;
   document.getElementById('playBtn').disabled = !recordings[index];
@@ -669,7 +692,7 @@ function resetSession() {
   stopTimer();
 
   // Clear state
-  images = []; index = 0; recordings = {}; timestamps = {}; notes = {};
+  images = []; index = 0; recordings = {}; timestamps = {}; notes = {}; transcripts = {};
   sessionStartMs = null; mediaRecorder = null;
 
   // Clear form fields
@@ -700,6 +723,7 @@ function resetSession() {
   document.getElementById('btn1').classList.remove('has-data');
   document.getElementById('btn2').classList.remove('has-data');
   document.getElementById('notesArea').value = '';
+  document.getElementById('transcriptArea').value = '';
   document.getElementById('notesSaved').textContent = '';
   document.getElementById('notesImgLabel').textContent = '';
 
@@ -720,7 +744,7 @@ function autoSave() {
       l1: getL1(), l2: getL2(), l2Onset: getL2Onset(),
       elicitorId: getElicitor(), stimulusSet: getStimulusSet(),
       taskType: getTaskType(), warmup: document.getElementById('warmupDone').checked,
-      notes, savedAt: new Date().toISOString(),
+      notes, transcripts, savedAt: new Date().toISOString(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
     showToast();
@@ -755,6 +779,7 @@ function tryRestore() {
     if (d.taskType) { const s=document.getElementById('taskType'); s.value=d.taskType; s.classList.toggle('unset',!d.taskType); }
     if (d.warmup) document.getElementById('warmupDone').checked = true;
     if (d.notes) notes = d.notes;
+    if (d.transcripts) transcripts = d.transcripts;
     onMetaChange();
   } catch(e) {}
 }
@@ -801,7 +826,7 @@ function deleteImage(i, e) {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     alert('Stop recording before deleting an image.'); return;
   }
-  const newRec={}, newTs={}, newNotes={};
+  const newRec={}, newTs={}, newNotes={}, newTranscripts={};
   Object.keys(recordings).forEach(k=>{
     const ki=Number(k); if(ki===i) return;
     const nk=ki<i?ki:ki-1; newRec[nk]=recordings[k];
@@ -811,7 +836,11 @@ function deleteImage(i, e) {
     const ki=Number(k); if(ki===i) return;
     newNotes[ki<i?ki:ki-1]=notes[k];
   });
-  images.splice(i,1); recordings=newRec; timestamps=newTs; notes=newNotes;
+  Object.keys(transcripts).forEach(k=>{
+    const ki=Number(k); if(ki===i) return;
+    newTranscripts[ki<i?ki:ki-1]=transcripts[k];
+  });
+  images.splice(i,1); recordings=newRec; timestamps=newTs; notes=newNotes; transcripts=newTranscripts;
   if(index>=images.length) index=Math.max(0,images.length-1);
   document.getElementById('fileCount').textContent = images.length
     ? images.length+' image'+(images.length!==1?'s':'')+' loaded' : '';
@@ -1013,6 +1042,26 @@ function buildCHATHeader(){
   const sex = sexMap[gender] || 'unspecified';
   let chatAge = age ? age+';' : '';
 
+  // Build transcript tiers if any transcripts exist
+  const transcriptLines = [];
+  const sortedKeys = Object.keys(transcripts).sort((a,b)=>Number(a)-Number(b));
+  if (sortedKeys.length) {
+    transcriptLines.push('');
+    transcriptLines.push('; ── Transcription ──');
+    sortedKeys.forEach(i => {
+      const imgNum = String(Number(i)+1).padStart(2,'0');
+      const t = (transcripts[i]||'').trim();
+      transcriptLines.push(`; Image ${imgNum}`);
+      if (t) {
+        // Split on sentence-ending punctuation or newlines into utterances
+        const utts = t.split(/(?<=[.!?])\s+|\n+/).filter(u=>u.trim());
+        utts.forEach(u => transcriptLines.push(`*CHI:\t${u.trim()} .`));
+      } else {
+        transcriptLines.push(`*CHI:\t. [= no transcript entered]`);
+      }
+    });
+  }
+
   const lines = [
     `@UTF8`,
     `@Begin`,
@@ -1028,11 +1077,12 @@ function buildCHATHeader(){
     warmup==='yes' ? `@Comment:\tWarm-up administered` : '',
     ``,
     `@Comment:\tTranscript generated by Elicit v1.0 — A picture-based elicitation tool (https://priyaprithiviraj.github.io/elicit)`,
+    ...transcriptLines,
     ``,
-    `; ── Paste transcription below ──`,
+    transcriptLines.length ? '' : `; ── Paste transcription below ──`,
     ``,
     `@End`,
-  ].filter(l=>l!==null&&l!=='');
+  ].filter(l=>l!==null&&l!==undefined);
 
   return lines.join('\n');
 }
@@ -1059,13 +1109,14 @@ function downloadAll(){
   });
 
   // CSV — session_id and corpus first, then all other metadata
-  let csv='session_id,corpus,participant_id,age,gender,l1,l2,l2_onset,elicitor_id,stimulus_set,task_type,warmup,date,image_number,filename,onset_ms,offset_ms,duration_ms,notes\n';
+  let csv='session_id,corpus,participant_id,age,gender,l1,l2,l2_onset,elicitor_id,stimulus_set,task_type,warmup,date,image_number,filename,onset_ms,offset_ms,duration_ms,transcript,notes\n';
   keys.slice().sort((a,b)=>Number(a)-Number(b)).forEach(i=>{
     const imgNum=String(Number(i)+1).padStart(2,'0');
     const filename=`${safe}_image_${imgNum}.wav`;
     const ts=timestamps[i]||{onset_ms:'',offset_ms:'',duration_ms:''};
+    const transcriptText=(transcripts[i]||'').replace(/"/g,'""');
     const noteText=(notes[i]||'').replace(/"/g,'""');
-    csv+=`${sesId},${corpus},${name},${age},${gender},${l1},${l2},${l2onset},${elicitor},${stimset},${tasktype},${warmup},${recDate},${imgNum},${filename},${ts.onset_ms},${ts.offset_ms},${ts.duration_ms},"${noteText}"\n`;
+    csv+=`${sesId},${corpus},${name},${age},${gender},${l1},${l2},${l2onset},${elicitor},${stimset},${tasktype},${warmup},${recDate},${imgNum},${filename},${ts.onset_ms},${ts.offset_ms},${ts.duration_ms},"${transcriptText}","${noteText}"\n`;
   });
   const csvBlob=new Blob([csv],{type:'text/csv'});
   const csvUrl=URL.createObjectURL(csvBlob);
